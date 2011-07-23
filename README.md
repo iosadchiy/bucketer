@@ -8,7 +8,7 @@ Installation
 ------------
 
 ```
-git clone https://tepoga@github.com/tepoga/bucketer.git
+git clone git://github.com/tepoga/bucketer.git
 cd bucketer
 bundle install
 ```
