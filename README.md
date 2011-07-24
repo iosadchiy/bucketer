@@ -26,6 +26,7 @@ ruby bucketer.rb input.txt 3 2
 ```
 
 Parameters:
+
 * input.txt - file with input data in json format. E.g [1,2,3,4,5]
 * 3 - average numbers per bucket
 * 2 - spread. Smaller value makes numbers stick together
@@ -46,7 +47,7 @@ spread.
 Algorithmic complexity is O(n) since we traverse the array only once.
 
 Avg number of items per bucket gets closer to set parameter value with
-the increase of (avg_items_per_bucket / total_items) ratio.
+the increase of (total_items / avg_items_per_bucket) ratio.
 
 Note that buckets in the ouput don't necessarily go in the same order
 they were created (no requirement for that provided)
