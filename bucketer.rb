@@ -23,6 +23,30 @@ class Bucketer
     res.values.sort{ |a,b| a.first <=> b.first }
   end
 
+
+  def self.group_retain_order(input, avg = 2, s = 3)
+    input = input.dup
+    avg = avg.to_f
+    s = s.to_f
+
+    res = []
+
+    while input.size > 0 do
+      x = rand
+      n = Math.sqrt(-2.0 * Math.log(x)) * Math.cos(2.0 * Math::PI * x)
+      size = (avg + s*n).round
+
+      bucket = []
+      while size > 0 and input.size > 0
+        bucket << input.shift
+        size -= 1
+      end
+      res << bucket
+    end
+
+    res
+  end
+
 end
 
 
@@ -50,7 +74,7 @@ else
   if false
     10.times do |i|
       n = 10
-      group = Bucketer.fast_group((1..n).to_a, 2, 2)
+      group = Bucketer.group_retain_order((1..n).to_a, 2, 2)
       puts "#{group.size} buckets; #{n / group.size.to_f} avg"
       puts group.inspect
     end
@@ -68,7 +92,7 @@ else
   spread = ARGV[2] || 2
 
   input = JSON.parse File.read(filename)
-  res = Bucketer.fast_group input, avg, spread
+  res = Bucketer.group_retain_order input, avg, spread
   puts res.inspect
 
 end
