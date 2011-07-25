@@ -20,7 +20,7 @@ class Bucketer
       res[bucket_num] << el
     end
 
-    res.values
+    res.values.sort{ |a,b| a.first <=> b.first }
   end
 
 end
