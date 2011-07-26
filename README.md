@@ -13,43 +13,65 @@ cd bucketer
 bundle install
 ```
 
-To run a few tests:
-
-```
-rspec bucketer.rb
-```
-
 To run it from command line:
 
 ```
-ruby bucketer.rb input.txt 3 2
+ruby bucketer.rb input.txt 3
 ```
 
 Parameters:
 
 * input.txt - file with input data in json format. E.g [1,2,3,4,5]
 * 3 - average number of items per bucket
-* 2 - spread. Smaller value makes numbers stick together
 
 
 Algorithm description:
 ----------------------
 
-Pretty simple: for each element in the input array compute the number
-of bucket to put it into. Adjacent elements are likely to get to the
-same bucket.
+First we need to define average bucket length:
+avg_length = time_interval / avg_items_per_bucket
+where time_interval = input.last - input.first
 
-When determining bucket number random value with normal distribution
-is used. This gives the 'stick together' behaviour and allows co
-configure not only average number of numbers per bucket but aslo the
-spread.
+Then we split the whole time interval into random intervals with mean
+value of avg_length. That is all.
 
-Avg number of items per bucket gets closer to set parameter value with
-the increase of (total_items / avg_items_per_bucket) ratio.
+Note that it's only possible to get the required number of items per
+bucket if you allow empty buckets in the result (ALLOW_EMPTY_BUCKETS
+constant). This is actually quite logical - a bucket with no elements
+have a right to exist. If empty buckets are disabled, the resulting
+average number of items will be a larger by some amount (depending on
+the input data).
 
 No error handling provided: it's up to the user to ensure that input
 file exists and contains valid json and he's not recommended to enter
 0 as average number of items value.
+
+
+Real life example
+-----------------
+
+John booted his laptop to add some photos at 9:00. At 9:10 he was
+finished with it, having added 5 photos. Then he added 5 more photos
+at 11:00 and one more at 15:00. We may end up with such input data:
+
+[1, 60, 120, 500, 600, 7200, 7210, 7300, 7400, 7410, 21600]
+
+If we run bucketer 10 times with this data, we'll get this:
+
+    > time ruby bucketer.rb input3.txt 2
+    [[1, 60, 120, 500, 600], [7200, 7210, 7300, 7400, 7410], [21600]]
+    [[1, 60, 120, 500, 600], [7200, 7210, 7300, 7400, 7410, 21600]]
+    [[1, 60, 120, 500, 600], [7200, 7210, 7300, 7400, 7410], [21600]]
+    [[1, 60, 120, 500, 600], [7200, 7210, 7300, 7400, 7410], [21600]]
+    [[1, 60, 120, 500, 600], [7200, 7210, 7300, 7400, 7410], [21600]]
+    [[1, 60, 120, 500], [600], [7200, 7210, 7300, 7400, 7410], [21600]]
+    [[1, 60, 120, 500, 600, 7200, 7210, 7300, 7400, 7410], [21600]]
+    [[1, 60, 120, 500, 600], [7200, 7210, 7300, 7400, 7410], [21600]]
+    [[1, 60, 120, 500, 600, 7200, 7210, 7300, 7400, 7410], [21600]]
+    [[1, 60, 120, 500, 600], [7200, 7210, 7300, 7400, 7410], [21600]]
+
+Which seems reasonable: photos tend to group as they were added.
+
 
 
 Task description
